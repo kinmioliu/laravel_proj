@@ -44,7 +44,7 @@ class Post {
     }
 
     public static function find($slug) {
-        return Post::all()->firstWhere("slug", $slug);
+        return static::all()->firstWhere("slug", $slug);
     }
 
     public static function findOrFail($slug) {
