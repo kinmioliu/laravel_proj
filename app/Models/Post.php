@@ -12,13 +12,20 @@ class Post {
     public $author;    
     public $date;
     public $summary;
+    public $title;
+    public $slug;
     public $body;
 
+    // this construct function product an dependence: Post->document, not a good design
+    // we can use an proxy or other thing, but the real thing is it seems there is no further requirement that there Post->document relation will change
+    // so I choose remain this design.
     public function __construct($document)
     {
         $this->author = $document->matter("author");
         $this->date = $document->matter("date");
         $this->summary = $document->matter("summary");
+        $this->title = $document->matter("title");
+        $this->slug = $document->matter("slug");
         $this->body = $document->body();
     }
 
@@ -27,30 +34,24 @@ class Post {
         return $this->body;
     }
 
-    public static function all() {        
-        return collect(File::files(resource_path("posts/")))
-        ->map(fn($file)=>YamlFrontMatter::parse($file->getContents()))
-        ->map(fn($document)=>new Post($document));
-
-        // $files = File::files(resource_path("posts/"));
-        // return array_map(fn($file)=>new Post(YamlFrontMatter::parse($file->getContents())), $files);
-        // $posts = [];
-        // foreach ($files as $file) {
-        //     $posts[] = new Post(YamlFrontMatter::parse($file->getContents()));
-        // }
-        // return $posts;
-        // ddd($documents[1]->body());
-        // ddd($documents[1]->matter("date"));        
-        // ddd($documents[1]->matter("title"));
-
-        // return array_map(fn($file)=>$file->getContents(), $files);
+    public static function all() {
+        return cache()->rememberForever("posts_all", 
+                    fn()=>collect(File::files(resource_path("posts/")))
+                        ->map(fn($file)=>YamlFrontMatter::parse($file->getContents()))
+                        ->map(fn($document)=>new Post($document))
+                        ->sortBy("date")
+                );
     }
 
-    public static function find($post_name) {
-        base_path();
-        if (!file_exists($post_path = resource_path("posts/{$post_name}.html"))) {
+    public static function find($slug) {
+        return Post::all()->firstWhere("slug", $slug);
+    }
+
+    public static function findOrFail($slug) {
+        $post = Post::find($slug);
+        if (is_null($post)) {
             throw new ModelNotFoundException();
         }
-        return cache()->remember( "post/{post_name}", 5, fn()=> file_get_contents($post_path));;
+        return $post;
     }
 }
