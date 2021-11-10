@@ -2,56 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\File;
-use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Post {
-    
-    public $author;    
-    public $date;
-    public $summary;
-    public $title;
-    public $slug;
-    public $body;
+class Post extends Model
+{
+    use HasFactory;
+    protected $guarded = [];
+    // protected $fillable = ['title', 'author', 'summary', 'body', 'published_at'];
 
-    // this construct function product an dependence: Post->document, not a good design
-    // we can use an proxy or other thing, but the real thing is it seems there is no further requirement that there Post->document relation will change
-    // so I choose remain this design.
-    public function __construct($document)
+    protected $with = ['catalogue', 'author'];
+
+    public function catalogue() 
     {
-        $this->author = $document->matter("author");
-        $this->date = $document->matter("date");
-        $this->summary = $document->matter("summary");
-        $this->title = $document->matter("title");
-        $this->slug = $document->matter("slug");
-        $this->body = $document->body();
+        return $this->belongsTo(Catalogue::class);        
     }
 
-    public function __toString()
+    public function author() 
     {
-        return $this->body;
-    }
-
-    public static function all() {
-        return cache()->rememberForever("posts_all", 
-                    fn()=>collect(File::files(resource_path("posts/")))
-                        ->map(fn($file)=>YamlFrontMatter::parse($file->getContents()))
-                        ->map(fn($document)=>new Post($document))
-                        ->sortBy("date")
-                );
-    }
-
-    public static function find($slug) {
-        return static::all()->firstWhere("slug", $slug);
-    }
-
-    public static function findOrFail($slug) {
-        $post = Post::find($slug);
-        if (is_null($post)) {
-            throw new ModelNotFoundException();
-        }
-        return $post;
+        return $this->BelongsTo(User::class, 'user_id');
     }
 }
