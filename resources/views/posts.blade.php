@@ -1,22 +1,16 @@
 <x-layout>
-    @foreach($posts as $post)
-        <article>
-            <h1>
-                <a href="/post/{{$post->id}}">
-                    {!! $post->title !!}
-                </a>
-            </h1>
+    @include('_posts_header')
+    <main class="max-w-6xl mx-auto mt-6 lg:mt-20 space-y-6">        
+        @if ($posts->count() > 0)
+        <x-post_featured_card :post="$posts[0]"/>        
+        <div class="lg:grid lg:grid-cols-6">
+            @foreach ($posts->skip(1) as $post)
+                <x-post_card :post="$post" style="grid-column: span {{ $loop->iteration <= 2 ? 3 : 2 }}"/>
+            @endforeach
+        </div>
+        @else
+            <p class="text-center">no posts yet.</p>
+        @endif
+    </main>
 
-            <div >
-                <h3 class="col-lg-2"><a href="/catalogue/{{$post->catalogue->name}}">{{$post->catalogue->name}}</a></h3>
-                <p class="col-lg-2">
-                  date:{{ $post->published_at }} author: <a href="/author/{{ $post->author->name }}">{{ $post->author->name }}</a>
-                </p>
-            </div>
-            <p>
-                {{ $post->summary }}
-            </p>
-        </article>
-    @endforeach
 </x-layout>
-
