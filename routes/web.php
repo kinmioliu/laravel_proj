@@ -18,9 +18,18 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 */
 
 Route::get('/', function () {
-    return view('posts', ['posts'=> Post::latest()->get()]); // 2 query; order by
+    $posts = Post::latest();
+    if (request('search')) {
+        $posts->where('title', 'like', '%' . request('search') . '%')
+        ->orWhere('body', 'like', '%' . request('search') . '%');
+    }    
+
+    return view('posts', [
+            'posts'=> $posts->get(),
+            'catalogues' => Catalogue::all()
+        ]); // 2 query; order by
     return view('posts', ['posts'=>Post::all()]); // many query
-});
+})->name('home');
 
 Route::get('/post/{post}', function (Post $post) { // route model binding
     return view('post', ['post'=>$post]);
@@ -28,7 +37,11 @@ Route::get('/post/{post}', function (Post $post) { // route model binding
 
 Route::get('/catalogue/{catalogue}', function (Catalogue $catalogue) {
     // ddd($catalogue->posts);
-    return view('posts', ['posts'=>$catalogue->posts]);
+    return view('posts', [
+            'posts'=>$catalogue->posts,
+            'currentCatalogue' => $catalogue,
+            'catalogues' => Catalogue::all()
+        ]);
 });
 
 Route::get('/author/{author}', function (User $author) {

@@ -22,8 +22,8 @@ class PostFactory extends Factory
             'catalogue_id' => random_int(1, $catalogue_cnt),
             'user_id' => random_int(1, $user_cnt),
             'published_at' => $this->faker->date(),
-            'summary' => $this->faker->sentence(),
-            'body' => $this->faker->paragraph()
+            'summary' => '<p>' . implode('<p></p>', $this->faker->paragraphs(2)) . '</p>',
+            'body' => '<p>' . implode('<p></p>', $this->faker->paragraphs(random_int(4, 10))) . '</p>',
         ];
     }
 }
