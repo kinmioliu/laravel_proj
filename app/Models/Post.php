@@ -16,6 +16,8 @@ class Post extends Model
 
     public function scopeFilter($query, array $filters)
     {
+        // dd($filters);
+        // dd($filters['author']);
         /*
         select title 
         from posts 
@@ -33,13 +35,15 @@ class Post extends Model
         //    })
         //    ->get();
         $query->when($filters['search'] ?? false, fn($query, $token) =>
-            $query
-                ->where('title', 'like', '%' . $token . '%')
-                ->orWhere('body', 'like', '%' . $token . '%')
-                
+            // fix bug, group where
+            $query->where(fn($query)=>
+                $query
+                    ->where('title', 'like', '%' . $token . '%')
+                    ->orWhere('body', 'like', '%' . $token . '%')
+            )                
         );
         $query->when($filters['catalogue'] ?? false, fn($query, $catalogue) =>
-        
+
             // method2
             $query->whereHas('catalogue', fn($query)=> $query->where('name', $catalogue))
             // method 1
@@ -50,6 +54,10 @@ class Post extends Model
             //             ->whereColumn('catalogues.id', 'posts.catalogue_id')
             //             ->where('name', $catalogue)
             //     )
+        );
+
+        $query->when($filters['author'] ?? false, fn($query, $author) => 
+                $query->whereHas('author', fn($query) => $query->where('username', $author))
         );
     }
 

@@ -1,5 +1,5 @@
 
-<div class="relative lg:inline-flex bg-gray-100 rounded-xl">
+<!-- <div class="relative lg:inline-flex bg-gray-100 rounded-xl"> -->
 
     <div x-data="{show: false}" @click.away="show = false"> 
         <!--trigger-->
@@ -9,4 +9,4 @@
             {{ $slot }}
         </div>
     </div>
-</div>
+<!-- </div> -->

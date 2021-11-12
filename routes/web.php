@@ -47,10 +47,11 @@ Route::get('/post/{post}', [PostController::class, 'show']);
 //             'catalogues' => Catalogue::all()
 //         ]);
 // });
+Route::get('/author/{author}', [PostController::class, 'index']);
 
-Route::get('/author/{author}', function (User $author) {
-    return view('posts', ['posts' => $author->posts]);
-});
+// Route::get('/author/{author}', function (User $author) {
+//     return view('posts.index', ['posts' => $author->posts]);
+// });
 
 // Route::get('/post/{id}', function ($id) {
 //     return view('post', ['post'=>Post::findOrFail($id)]);
