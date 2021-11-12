@@ -16,10 +16,40 @@ class Post extends Model
 
     public function scopeFilter($query, array $filters)
     {
+        /*
+        select title 
+        from posts 
+        where exists(
+            select * 
+            from catalogues
+            where catalogues.id = posts.catalogue_id and catalogues.name = 'family'
+        );
+        */
+        // $users = DB::table('users')
+        //    ->whereExists(function ($query) {
+        //        $query->select(DB::raw(1))
+        //              ->from('orders')
+        //              ->whereColumn('orders.user_id', 'users.id');
+        //    })
+        //    ->get();
         $query->when($filters['search'] ?? false, fn($query, $token) =>
             $query
                 ->where('title', 'like', '%' . $token . '%')
                 ->orWhere('body', 'like', '%' . $token . '%')
+                
+        );
+        $query->when($filters['catalogue'] ?? false, fn($query, $catalogue) =>
+        
+            // method2
+            $query->whereHas('catalogue', fn($query)=> $query->where('name', $catalogue))
+            // method 1
+            // $query
+            //     ->whereExists( fn($query) =>
+            //         $query
+            //             ->from('catalogues')
+            //             ->whereColumn('catalogues.id', 'posts.catalogue_id')
+            //             ->where('name', $catalogue)
+            //     )
         );
     }
 

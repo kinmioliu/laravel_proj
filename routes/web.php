@@ -39,14 +39,14 @@ Route::get('/post/{post}', [PostController::class, 'show']);
 //     return view('post', ['post'=>$post]);
 // });
 
-Route::get('/catalogue/{catalogue}', function (Catalogue $catalogue) {
-    // ddd($catalogue->posts);
-    return view('posts', [
-            'posts'=>$catalogue->posts,
-            'currentCatalogue' => $catalogue,
-            'catalogues' => Catalogue::all()
-        ]);
-});
+// Route::get('/catalogue/{catalogue}', function (Catalogue $catalogue) {
+//     // ddd($catalogue->posts);
+//     return view('posts', [
+//             'posts'=>$catalogue->posts,
+//             'currentCatalogue' => $catalogue,
+//             'catalogues' => Catalogue::all()
+//         ]);
+// });
 
 Route::get('/author/{author}', function (User $author) {
     return view('posts', ['posts' => $author->posts]);

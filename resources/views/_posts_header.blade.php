@@ -19,7 +19,7 @@
                     <x-dropdown-item href="/" :active="request()->routeIs('home')">All</x-dropdown-item>                        
                     @foreach ($catalogues as $catalogue)
                         <x-dropdown-item 
-                            href="/catalogue/{{ $catalogue->name }}"
+                            href="?catalogue={{ $catalogue->name }}"
                             :active="request()->is('catalogue/'.$catalogue->name)"
                             >
                             {{ ucwords($catalogue->name) }}
