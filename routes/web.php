@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Models\Catalogue;
 use App\Models\Post;
 use App\Models\User;
@@ -17,23 +18,26 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 |
 */
 
-Route::get('/', function () {
-    $posts = Post::latest();
-    if (request('search')) {
-        $posts->where('title', 'like', '%' . request('search') . '%')
-        ->orWhere('body', 'like', '%' . request('search') . '%');
-    }    
+Route::get('/', [PostController::class, 'index'])->name('home');
 
-    return view('posts', [
-            'posts'=> $posts->get(),
-            'catalogues' => Catalogue::all()
-        ]); // 2 query; order by
-    return view('posts', ['posts'=>Post::all()]); // many query
-})->name('home');
+// Route::get('/', function () {
+//     $posts = Post::latest();
+//     if (request('search')) {
+//         $posts->where('title', 'like', '%' . request('search') . '%')
+//         ->orWhere('body', 'like', '%' . request('search') . '%');
+//     }    
 
-Route::get('/post/{post}', function (Post $post) { // route model binding
-    return view('post', ['post'=>$post]);
-});
+//     return view('posts', [
+//             'posts'=> $posts->get(),
+//             'catalogues' => Catalogue::all()
+//         ]); // 2 query; order by
+//     return view('posts', ['posts'=>Post::all()]); // many query
+// })->name('home');
+
+Route::get('/post/{post}', [PostController::class, 'show']);
+// Route::get('/post/{post}', function (Post $post) { // route model binding
+//     return view('post', ['post'=>$post]);
+// });
 
 Route::get('/catalogue/{catalogue}', function (Catalogue $catalogue) {
     // ddd($catalogue->posts);

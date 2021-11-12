@@ -12,7 +12,16 @@ class Post extends Model
     protected $guarded = [];
     // protected $fillable = ['title', 'author', 'summary', 'body', 'published_at'];
 
-    protected $with = ['catalogue', 'author'];
+    protected $with = ['catalogue', 'author']; // or without
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? false, fn($query, $token) =>
+            $query
+                ->where('title', 'like', '%' . $token . '%')
+                ->orWhere('body', 'like', '%' . $token . '%')
+        );
+    }
 
     public function catalogue() 
     {
