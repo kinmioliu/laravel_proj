@@ -1,4 +1,8 @@
 <x-layout>
+    @if (session()->has('success'))
+        <x-flash>{{session()->get('success')}}</x-flash>
+    @endif
+    
     @include('_post_nav')
     @include('posts._header')
     <main class="max-w-6xl mx-auto mt-6 lg:mt-20 space-y-6">        
@@ -15,4 +19,5 @@
         @endif
     </main>
     @include('_posts_footer')
+
 </x-layout>

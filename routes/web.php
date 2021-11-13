@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\UserRegisterController;
 use App\Http\Controllers\PostController;
 use App\Models\Catalogue;
 use App\Models\Post;
@@ -56,3 +58,9 @@ Route::get('/author/{author}', [PostController::class, 'index']);
 // Route::get('/post/{id}', function ($id) {
 //     return view('post', ['post'=>Post::findOrFail($id)]);
 // });
+
+Route::get('/register', [UserRegisterController::class, 'create'])->middleware('guest');
+Route::post('/register', [UserRegisterController::class, 'store'])->middleware('guest');
+Route::post('logout', [SessionsController::class, 'destroy'])->middleware('auth');;
+Route::get('login', [SessionsController::class, 'create'])->middleware('guest');;
+Route::post('login', [SessionsController::class, 'verify'])->middleware('guest');;
